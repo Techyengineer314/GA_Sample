@@ -1,4 +1,3 @@
 ﻿  main.cpp
-c:\users\sean\documents\visual studio 2015\projects\consoleapplication8\consoleapplication8\main.cpp(28): warning C4101: 'operation1': unreferenced local variable
-  ConsoleApplication8.vcxproj -> c:\users\sean\documents\visual studio 2015\Projects\ConsoleApplication8\Debug\ConsoleApplication8.exe
-  ConsoleApplication8.vcxproj -> c:\users\sean\documents\visual studio 2015\Projects\ConsoleApplication8\Debug\ConsoleApplication8.pdb (Full PDB)
+  ConsoleApplication8.vcxproj -> C:\Users\Sean\Documents\Visual Studio 2015\Projects\ConsoleApplication8\Debug\ConsoleApplication8.exe
+  ConsoleApplication8.vcxproj -> C:\Users\Sean\Documents\Visual Studio 2015\Projects\ConsoleApplication8\Debug\ConsoleApplication8.pdb (Full PDB)

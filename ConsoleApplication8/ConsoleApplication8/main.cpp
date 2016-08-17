@@ -9,7 +9,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 bool digit(int a) {
-	if (a < 9) {
+	if (a <= 9) {
+		return true;
+	}
+	return false;
+}
+
+bool op(int a) {
+	if (a > 15) {
 		return true;
 	}
 	return false;
@@ -24,9 +31,9 @@ int main() {
 	//expecting somewhere between 100 - 1000 children per generation
 	bool found_number = false, found_op = false;
 
-	int target = 42, current = 0, nextop = 0, total = 0, answer = 0, next = 0, currentop = 0, count = 0;
+	int target = 42, answer = 0, currentop = 0, count = 0;
+	double total = 0, current = 0, next = 0, nextop = 0;
 	int operator1[8];
-	while (!answer) {
 		for (int i = 0; i < 1000; i++)
 			population[i] = distribution(genny); //chooses a completely random number between 0 and 0xFFFFFFFF
 		for (int j = 0; j < 1000;j++) {
@@ -36,6 +43,7 @@ int main() {
 			nextop = 0;
 			next = 0;
 			total = 0;
+			count = 0;
 			for (int i = 7; i >= 0;i--) {
 				operator1[i] = 0xF & (population[j] >> ((7 - i) * 4));
 				if (operator1[i] > 9) {
@@ -53,7 +61,7 @@ int main() {
 						operator1[i] = 0x2F;
 						break;
 					default:
-						operator1[i] = 0;
+						operator1[i] = 0xF;
 					
 					}
 				}
@@ -63,20 +71,87 @@ int main() {
 			//////////////////////////////////////////////////////////////////////
 			/********************************************************************
 			Algorithm uses following method to determine solution:
-				Read through operator array until number is found and store that number in current num
+				Read through operator array until number is found and store that number in current
 				Read through operator array until operation is found and store said operator in current op
-				Read through until next number is found and perform that calculation with that number in next num and store it in current num as well as total
+				Read through until next number is found and perform that calculation with that number in next and store it in current num as well as total
 				repeat till end of array
-				handle special cases of no numbers or no operators or one number  and 7 operators with search function 							
+				handle special cases of no numbers or no operators or one number  and 7 operators with search function 		
+				Also begin a check to determine if there are leading zeroes that should be ignored
 			*********************************************************************/
+			while (operator1[count] == 0) {
+				count++;
+				if (count == 8) {
+					total = 0;
+					break;
+				}
+				if (operator1[count] > 9 && count > 0) {
+					current = 0;
+					currentop = operator1[count];
+					found_op = true;
+				}
+			}
+			while (count < 7) {
+				if (!(currentop == operator1[count])) {
+					found_op = false;
+				}
+				while (!found_number) {
+					if (count > 7) {
+						break;
+					}
+					found_number = digit(operator1[count]);
+					current = operator1[count];
+					count++;
+				}
 
+
+				while (!found_op) {
+					if (count > 7) {
+						break;
+					}
+					found_op = op(operator1[count]);
+					currentop = operator1[count];
+					count++;
+				}
+
+				found_number = false;
+
+				while (!found_number) {
+					if (count > 7) {
+						break;
+					}
+					found_number = digit(operator1[count]);
+					next = operator1[count];
+					count++;
+				}
+				if (total == 0) {
+					total = current;
+				}
+				switch (currentop) {
+				case 0x2A:
+					total *= next;
+					break;
+				case 0x2B:
+					total += next;
+					break;
+				case 0x2D:
+					total -= next;
+					break;
+				case 0x2F:
+					total /= next;
+					break;
+				default:
+					total = total;
+				}
+			}
 			if (target == total) {
 				answer = population[j];
 				break;
 			}
-			fitness[j] = 1 / (target - total);
+
+			fitness[j] = 1.0 / (target - total);
+			std::cout << "The fitness of: " << population[j] << " is: " << fitness[j] << '\n';
 		}
-	}
+	
 		
 	system("PAUSE");
 	return 0;
