@@ -1,3 +1,5 @@
 ﻿  main.cpp
+c:\users\sean\documents\github\ga_sample\consoleapplication8\consoleapplication8\main.cpp(78): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\sean\documents\github\ga_sample\consoleapplication8\consoleapplication8\main.cpp(80): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   ConsoleApplication8.vcxproj -> C:\Users\Sean\Documents\GitHub\GA_Sample\ConsoleApplication8\Debug\ConsoleApplication8.exe
   ConsoleApplication8.vcxproj -> C:\Users\Sean\Documents\GitHub\GA_Sample\ConsoleApplication8\Debug\ConsoleApplication8.pdb (Full PDB)
