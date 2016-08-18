@@ -16,7 +16,7 @@ bool digit(int a) {
 }
 
 bool op(int a) {
-	if (a > 15) {
+	if (a > 20) {
 		return true;
 	}
 	return false;
@@ -46,8 +46,9 @@ int main() {
 			count = 0;
 			for (int i = 7; i >= 0;i--) {
 				operator1[i] = 0xF & (population[j] >> ((7 - i) * 4));
+
 				if (operator1[i] > 9) {
-					switch(operator1[i]) {
+					switch (operator1[i]) {
 					case 10:
 						operator1[i] = 0x2B;
 						break;
@@ -61,11 +62,22 @@ int main() {
 						operator1[i] = 0x2F;
 						break;
 					default:
-						operator1[i] = 0xF;
-					
+						operator1[i] = 0x20;
 					}
 				}
 			}
+			char a;
+			for (int i = 0; i < 8;i++) {
+				if (operator1[i] > 9) {
+					a = operator1[i];
+					std::cout << a << ' ';
+				}
+				else {
+					std::cout << operator1[i] << ' ';
+				}
+				
+			}
+			std::cout << '\n';
 			//////////////////////////////////////////////////////////////////////
 			//Beginning algorithm to check for total provided by random solution//
 			//////////////////////////////////////////////////////////////////////
@@ -84,13 +96,15 @@ int main() {
 					total = 0;
 					break;
 				}
-				if (operator1[count] > 9 && count > 0) {
+				if (operator1[count] > 0x29 && count > 0) {
 					current = 0;
+					found_number = true;
 					currentop = operator1[count];
 					found_op = true;
 				}
 			}
 			while (count < 7) {
+				next = 20;
 				if (!(currentop == operator1[count])) {
 					found_op = false;
 				}
@@ -120,12 +134,16 @@ int main() {
 						break;
 					}
 					found_number = digit(operator1[count]);
-					next = operator1[count];
+					if (found_number) {
+						next = operator1[count];
+					}
 					count++;
 				}
 				if (total == 0) {
 					total = current;
 				}
+				if (count > 7 && next == 20)
+					break;
 				switch (currentop) {
 				case 0x2A:
 					total *= next;
@@ -143,11 +161,12 @@ int main() {
 					total = total;
 				}
 			}
+			std::cout << "The total is: " << total << '\n';
 			if (target == total) {
 				answer = population[j];
+				std::cout << "an answer is: " << answer << '\n';
 				break;
 			}
-
 			fitness[j] = 1.0 / (target - total);
 			std::cout << "The fitness of: " << population[j] << " is: " << fitness[j] << '\n';
 		}
