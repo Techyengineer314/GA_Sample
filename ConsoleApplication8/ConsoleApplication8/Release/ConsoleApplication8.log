@@ -1,7 +1,7 @@
 ﻿  main.cpp
 main.cpp(78): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 main.cpp(80): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-main.cpp(245): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+main.cpp(246): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Generating code
   1 of 39 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation

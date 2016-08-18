@@ -74,7 +74,7 @@ bool op(int a) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 	srand(time(NULL));
 	std::default_random_engine genny; //seeds the RNG to the time of execution
 	genny.seed(time(NULL));
@@ -85,11 +85,12 @@ int main() {
 	bool found_number = false, found_op = false, answer_found = false;
 
 	//////////////////////////////////////////////////////////////////////////
-	//taarget number and other various declarations
+	//target number and other various declarations
 	/////////////////////////////////////////////////////////////////////////
 
-	int target = 50;
+	int target = 20;
 
+	std::cout << "the target is: " << target << '\n';
 
 
 	int answer = 0, currentop = 0, count = 0, generation = 0;
@@ -254,12 +255,17 @@ int main() {
 			population[0] = swap_bits(parent1, parent2, index3);//performing crossover
 			population[1] = swap_bits(parent2, parent1, index3);
 
-
 			while (count != 100) { //rebuilding population
 				parent_choice = rand() % 2;
 				xor_mask = distribution_mutation(genny);
 				population[count] = xor_mask ^ population[parent_choice];
 				count++;
+			}
+			if (generation > 100) {
+				std::cout << "Taking too long\nStarting over with a new base generation\n";
+				generation = 0;
+				for (int i = 0; i < 50; i++)
+					population[i] = distribution(genny); //chooses a completely random number between 0 and 0xFFFFFFFF
 			}
 			for (int j = 0; j < 50;j++) {
 				current = 0;
