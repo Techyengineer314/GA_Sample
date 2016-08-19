@@ -2,6 +2,7 @@
 #include<string>
 #include<stdio.h>
 #include<time.h>
+#include<ctime>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //This Sample Sets  out to attempt a basic Genetic Algorithm to determine the smallest//
@@ -16,9 +17,9 @@ int power(int x, int y) {
     return ans;
 }
 
-int swap_bits(int integer1, int integer2, int index) {
+long swap_bits(long integer1, long integer2, int index) {
     //swaps bits at the specified index and returns integer 1 swapped
-    int ans = 0, mask1, mask2, xor_mask = 0;
+    long ans = 0, mask1, mask2, xor_mask = 0;
     for (int i = 0; i <= index; i++) {
         mask1 = integer1 & power(2, i);
         mask2 = integer2 & power(2, i);
@@ -74,11 +75,18 @@ bool op(int a) {
 
 
 int main(int argc, char *argv[]) {
-    int seed = time(NULL);
-    srand(seed);
+    
+    int index,index2,index3,parent_choice = 0,count1 = 2,xor_mask = 0;
+    int total_runs = 0;
+    int num_run = 0;
+    std::clock_t start;
+    double duration, total_time = 0;
+    start = std::clock();
+    long seed = time(NULL);
+    srand((unsigned int)seed);
     std::cout << "The seed is: " << seed << '\n';
     double fitness[50];
-    unsigned long long population[50]; //sets up the array to store population
+    unsigned long long population[50],parent1,parent2; //sets up the array to store population
     //expecting somewhere between 100 - 1000 children per generation
     bool found_number = false, found_op = false, answer_found = false;
     
@@ -86,18 +94,31 @@ int main(int argc, char *argv[]) {
     //target number and other various declarations///////////////////////////
     /////////////////////////////////////////////////////////////////////////
     int target = 20;
-    std::cout << "Enter a Target Number or else. . . . . . . . . : ";
+    std::cout << "Enter a Target Number: ";
     std::cin >> target;
-    
-    
     std::cout << "The Target Number is: " << target << "\n\n";
     
+    std::cout << "Enter Desired number of times to run: ";
+    std::cin >> num_run;
+    std::cout << "The Number of times it wil run is: " << num_run << "\n\n";
+    
+    total_runs = num_run;
+    
     long long current_pop = 0;
+    long answer = 0;
     
-    int answer = 0, currentop = 0, count = 0, generation = 0, overall_generation = 0, nibbler;
-    double total = 0, current = 0, next = 0, nextop = 0;
+    int currentop = 0, count = 0, generation = 0, overall_generation = 0, nibbler;
+    int total = 0, current = 0, next = 0, nextop = 0;
     int operator1[8];
+    char a;
+
     
+    ////////////////////////
+    //Beginning algorithms//
+    ////////////////////////
+    
+    while(num_run > 1){
+        answer_found = false;
     for (int i = 0; i < 50; i++) {
         current_pop = 0;
         for (int j = 0; j < 8; j++) {
@@ -132,12 +153,18 @@ int main(int argc, char *argv[]) {
                     case 13:
                         operator1[i] = 0x2F;
                         break;
+                    case 14:
+                        operator1[i] = 0x5E;
+                        break;
+                    case 15:
+                        operator1[i] = 0x25;
+                        break;
                     default:
                         operator1[i] = 0x20;
                 }
             }
         }
-        char a;
+      
         for (int i = 0; i < 8;i++) {
             if (operator1[i] > 9) {
                 a = operator1[i];
@@ -223,6 +250,11 @@ int main(int argc, char *argv[]) {
             if (next == 20)
                 break;
             switch (currentop) {
+                case 0x25:
+                    if(!next)
+                        break;
+                    total = total % next;
+                    break;
                 case 0x2A:
                     total *= next;
                     break;
@@ -233,7 +265,12 @@ int main(int argc, char *argv[]) {
                     total -= next;
                     break;
                 case 0x2F:
+                    if(!next)
+                        break;
                     total /= next;
+                    break;
+                case 0x5E:
+                    total = power(total,next);
                     break;
                 default:
                     total = total;
@@ -257,12 +294,10 @@ int main(int argc, char *argv[]) {
     //then will begin flipping bits at random														   //
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    std::uniform_int_distribution<int> distribution_mutation(0, 0xFFFFFF);
-    int index,index2,parent1,parent2,index3,parent_choice = 0,count1 = 2,xor_mask = 0;
     while (!answer_found) {
         seed = time(NULL);
         std::cout << "\nThe NEW seed is: " << seed << "\n\n";
-        srand(seed);//seeds the ranodm number generator cause random stuff is fun!!!!
+        srand((unsigned int)seed);//seeds the ranodm number generator cause random stuff is fun!!!!
         generation++;
         count1 = 2;
         xor_mask = 0;
@@ -327,6 +362,12 @@ int main(int argc, char *argv[]) {
                             break;
                         case 13:
                             operator1[i] = 0x2F;
+                            break;
+                        case 14:
+                            operator1[i] = 0x5E;
+                            break;
+                        case 15:
+                            operator1[i] = 0x25;
                             break;
                         default:
                             operator1[i] = 0x20;
@@ -419,39 +460,54 @@ int main(int argc, char *argv[]) {
                 if (total == 0) {
                     total = current;
                 }
-                if (next == 20)
-                    break;
-                switch (currentop) {
-                    case 0x2A:
-                        total *= next;
+                    if (next == 20)
                         break;
-                    case 0x2B:
-                        total += next;
-                        break;
-                    case 0x2D:
-                        total -= next;
-                        break;
-                    case 0x2F:
-                        total /= next;
-                        break;
-                    default:
-                        total = total;
+                    switch (currentop) {
+                        case 0x25:
+                            if(!next)
+                                break;
+                            total = total % next;
+                            break;
+                        case 0x2A:
+                            total *= next;
+                            break;
+                        case 0x2B:
+                            total += next;
+                            break;
+                        case 0x2D:
+                            total -= next;
+                            break;
+                        case 0x2F:
+                            if(!next)
+                                break;
+                            total /= next;
+                            break;
+                        case 0x5E:
+                            total = power(total,next);
+                            break;
+                        default:
+                            total = total;
+                    }
                 }
-            }
-            std::cout << "\nThe total is: " << total << '\n';
-            std::cout << "At population number: " << j << "\nGeneration number: " << generation << '\n' << "Overall generation: " << overall_generation <<'\n';
-            if (target == total) {
-                answer = population[j];
-                std::cout << "An answer is: " << std::hex << answer << std::dec << '\n';
+                std::cout << "\nThe total is: " << total << '\n';
+                std::cout << "At population number: " << j << "\nGeneration number: " << generation << '\n' << "Overall generation: " << overall_generation <<'\n';
+                if (target == total) {
+                    answer = population[j];
+                    std::cout << "An answer is: " << std::hex << answer << std::dec << '\n';
                 answer_found = true;
-                break;
+                    break;
+                }
+                fitness[j] = 1.0 / (target - total);
+                if (fitness < 0) {
+                    continue;
+                }
+                std::cout << "The fitness of: " << std::hex<<population[j] << std::dec << " is: " << fitness[j] << "\n\n";
             }
-            fitness[j] = 1.0 / (target - total);
-            if (fitness < 0) {
-                continue;
-            }
-            std::cout << "The fitness of: " << std::hex<<population[j] << std::dec << " is: " << fitness[j] << "\n\n";
         }
+        duration = (std::clock() - start)/(double) CLOCKS_PER_SEC;
+        total_time+=duration;
+        num_run--;
     }
+    std::cout << "Answer found in: "<< (double)total_time<< " seconds\n";
     return 0;
 }
